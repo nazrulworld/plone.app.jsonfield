@@ -1,9 +1,9 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import ITestToken
 from plone import api
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_FUNCTIONAL_TESTING
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_INTEGRATION_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.restapi.interfaces import IDeserializeFromJson
@@ -26,7 +26,7 @@ ___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 class SerializerIntegrationTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_INTEGRATION_TESTING
+    layer = PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
@@ -36,7 +36,7 @@ class SerializerIntegrationTest(unittest.TestCase):
     def add_item(self):
         """ """
         body = {
-            '@type': 'TestOrganization',
+            '@type': 'TestToken',
             'title': 'Test Organization xxx',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
@@ -59,11 +59,11 @@ class SerializerIntegrationTest(unittest.TestCase):
 
         context = api.content.create(
                 container=self.portal,
-                type='TestOrganization',
+                type='TestToken',
                 id=None,
                 title='Test Organization xxx',
             )
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(ITestToken)['resource']
         fhir_value = fhir_field.from_iterable(json_dict)
         fhir_field.set(context, fhir_value)
 
@@ -92,7 +92,7 @@ class SerializerIntegrationTest(unittest.TestCase):
 
 class SerializerFunctionalTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_FUNCTIONAL_TESTING
+    layer = PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
 
     def setUp(self):
         """ """
@@ -106,7 +106,7 @@ class SerializerFunctionalTest(unittest.TestCase):
         """" """
         id_ = 'test-hospital'
         json_body = {
-            '@type': 'TestOrganization',
+            '@type': 'TestToken',
             'title': 'Test Organization xxx',
             'id': id_
         }

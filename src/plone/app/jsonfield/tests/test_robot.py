@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.testing import ROBOT_TEST_LEVEL
 from plone.testing import layered
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_ACCEPTANCE_TESTING  # noqa
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_ACCEPTANCE_TESTING  # noqa
 
 import os
 import robotsuite
@@ -22,7 +22,7 @@ def test_suite():
         suite.addTests([
             layered(
                 robottestsuite,
-                layer=PLONE_APP_jsonfield_ACCEPTANCE_TESTING
+                layer=PLONE_APP_JSON_FIELD_ACCEPTANCE_TESTING
             ),
         ])
     return suite

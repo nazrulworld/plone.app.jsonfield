@@ -52,7 +52,7 @@ setup(
     ],
     extras_require={
         'test': [
-            'plone.restapi',
+            'plone.restapi[test]',
             'plone.schemaeditor',
             'plone.supermodel',
             'plone.app.testing',

@@ -2,12 +2,10 @@
        xmlns:security="http://namespaces.plone.org/supermodel/security"
        xmlns="http://namespaces.plone.org/supermodel/schema">
   <schema>
-    <field name="resource" type="plone.app.jsonfield.field.JSON">
-      <description>Patient FHIR Resource.</description>
+    <field name="contacts" type="plone.app.jsonfield.field.JSON">
+      <description>Patient</description>
       <required>True</required>
       <title>Patient</title>
-      <model>fhirclient.models.organization.Organization</model>
-      <model_interface>plone.app.jsonfield.interfaces.IJSONModel</model_interface>
     </field>
   </schema>
 </model>

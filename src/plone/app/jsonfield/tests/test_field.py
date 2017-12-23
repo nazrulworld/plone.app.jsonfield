@@ -1,8 +1,6 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
 from plone.app.jsonfield import field
-from plone.app.jsonfield.helpers import resource_type_str_to_fhir_model
-from plone.app.jsonfield.interfaces import IJSONModel
 from plone.app.jsonfield.interfaces import IJSONValue
 from plone.app.jsonfield.value import JSONValue
 from zope.interface import Invalid
@@ -31,20 +29,9 @@ class FieldIntegrationTest(unittest.TestCase):
             )
         except Invalid as exc:
             raise AssertionError('Code should not come here, as everything should goes fine.\n{0!s}'.format(exc))
-        # Test with fhir field specific params
         try:
             field.JSON(
                 title=six.text_type('Organization resource'),
-                model='fhirclient.models.organization.Organization',
-                model_interface=IJSONModel
-            )
-        except Invalid as exc:
-            raise AssertionError('Code should not come here, as everything should goes fine.\n{0!s}'.format(exc))
-
-        try:
-            field.JSON(
-                title=six.text_type('Organization resource'),
-                resource_type='Organization'
             )
         except Invalid as exc:
             raise AssertionError('Code should not come here, as everything should goes fine.\n{0!s}'.format(exc))
@@ -54,7 +41,6 @@ class FieldIntegrationTest(unittest.TestCase):
             field.JSON(
                 title=six.text_type('Organization resource'),
                 resource_type='Organization',
-                model='fhirclient.models.organization.Organization'
             )
             raise AssertionError('Code should not come here! as should be invalid error')
         except Invalid:

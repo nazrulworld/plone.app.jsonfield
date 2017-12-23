@@ -19,7 +19,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 
 @implementer(IJSONValue)
-class JSONValue(defaultdict):
+class JSONValue(dict):
     """"""
     def patch(self, patch_data):
         """:@links: https://python-json-patch.readthedocs.io/en/latest/tutorial.html#creating-a-patch"""
@@ -28,8 +28,12 @@ class JSONValue(defaultdict):
 
         try:
             patcher = jsonpatch.JsonPatch(patch_data)
-            patcher.apply(self)
-        except jsonpatch.JsonPatchException as e:
+            # Pacther is doing deepcopy!
+            new_value = patcher.apply(self)
+            # Let's update
+            self.update(new_value)
+
+        except (jsonpatch.JsonPatchException, jsonpatch.JsonPointerException) as e:
             six.reraise(Invalid, Invalid(str(e)), sys.exc_info()[2])
 
     def stringify(self, prettify=False):
@@ -60,20 +64,33 @@ class JSONValue(defaultdict):
                     jsonschema.RefResolutionError
                     ) as exc:
                 six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
+
+        elif isinstance(obj, six.string_types):
+            raise WrongType('value must be json serialable!')
+
         else:
             try:
+                # First Test if value is iterable
+                iter(obj)
                 json.dumps(obj)
-            except ValueError as exc:
+            except (TypeError, ValueError) as exc:
                 msg = _('Only dict or list type value is allowed, value must be json serialable!')
                 if api.debug_mode():
                     msg += _('Original exception: {0!s}').format(exc)
 
-                six.reraise(WrongType, Invalid(msg), sys.exc_info()[2])
+                six.reraise(WrongType, WrongType(msg), sys.exc_info()[2])
 
-    def __init__(self, obj=None, schema=None, encoding='utf-8'):
+    def __init__(self, obj, schema=None, encoding='utf-8'):
         """ """
         # Let's validate before value assignment!
         self._validate_object(obj, schema=schema)
         self.encoding = encoding
+        args = []
+        if obj not in (None, NO_VALUE):
+            args.append(obj)
 
-        super(JSONValue, self).__init__(dict, obj)
+        super(JSONValue, self).__init__(*args)
+
+    def __str__(self):
+        """ """
+        return self.stringify()

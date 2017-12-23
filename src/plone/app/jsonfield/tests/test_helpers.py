@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
 from plone.app.jsonfield import helpers
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_INTEGRATION_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 from zope.interface import Invalid
 
 import inspect
@@ -14,7 +14,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 class HelperIntegrationTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_INTEGRATION_TESTING
+    layer = PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 
     def test_resource_type_to_dotted_model_name(self):
         """ """

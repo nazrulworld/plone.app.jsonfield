@@ -18,7 +18,7 @@ TEST_ZCML = """\
 """
 
 
-class PloneAppjsonfieldLayer(PloneSandboxLayer):
+class PloneAppJSONFieldLayer(PloneSandboxLayer):
 
     defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
 
@@ -52,26 +52,26 @@ class PloneAppjsonfieldLayer(PloneSandboxLayer):
         applyProfile(portal, 'plone.app.jsonfield:testing')
 
 
-PLONE_APP_jsonfield_FIXTURE = PloneAppjsonfieldLayer()
+PLONE_APP_JSON_FIELD_FIXTURE = PloneAppJSONFieldLayer()
 
 
-PLONE_APP_jsonfield_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(PLONE_APP_jsonfield_FIXTURE,),
-    name='PloneAppjsonfieldLayer:IntegrationTesting'
+PLONE_APP_JSON_FIELD_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(PLONE_APP_JSON_FIELD_FIXTURE,),
+    name='PloneAppJSONFieldLayer:IntegrationTesting'
 )
 
 
-PLONE_APP_jsonfield_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_jsonfield_FIXTURE, z2.ZSERVER_FIXTURE),
-    name='PloneAppjsonfieldLayer:FunctionalTesting'
+PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(PLONE_APP_JSON_FIELD_FIXTURE, z2.ZSERVER_FIXTURE),
+    name='PloneAppJSONFieldLayer:FunctionalTesting'
 )
 
 
-PLONE_APP_jsonfield_ACCEPTANCE_TESTING = FunctionalTesting(
+PLONE_APP_JSON_FIELD_ACCEPTANCE_TESTING = FunctionalTesting(
     bases=(
-        PLONE_APP_jsonfield_FIXTURE,
+        PLONE_APP_JSON_FIELD_FIXTURE,
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE
     ),
-    name='PloneAppjsonfieldLayer:AcceptanceTesting'
+    name='PloneAppJSONFieldLayer:AcceptanceTesting'
 )

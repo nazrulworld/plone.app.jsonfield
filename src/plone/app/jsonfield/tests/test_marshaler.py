@@ -1,9 +1,9 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import ITestToken
 from email.message import Message
 from plone.app.jsonfield import marshaler
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_INTEGRATION_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 from plone.restapi.interfaces import IDeserializeFromJson
 from plone.restapi.services.content.utils import create
 from plone.restapi.services.content.utils import rename
@@ -23,7 +23,7 @@ ___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 class MarshalerIntegrationTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_INTEGRATION_TESTING
+    layer = PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
@@ -33,7 +33,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
     def add_item(self):
         """ """
         body = {
-            '@type': 'TestOrganization',
+            '@type': 'TestToken',
             'title': 'Test Organization xxx',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
@@ -52,7 +52,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
     def test_marshaler(self):
         """ """
         context = self.add_item()
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(ITestToken)['resource']
 
         field_marshaler = queryMultiAdapter((context, fhir_field), IFieldMarshaler)
         self.assertIsNotNone(field_marshaler)
@@ -64,7 +64,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
 
         encode_str = field_marshaler.encode(context.resource)
 
-        rfc822_msg = constructMessageFromSchema(context, ITestOrganization)
+        rfc822_msg = constructMessageFromSchema(context, ITestToken)
         self.assertIsInstance(rfc822_msg, Message)
         try:
             rfc822_msg.as_string()
@@ -97,7 +97,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
         self.assertIsInstance(decoded_value, decoded_value2.__class__)
 
         context.resource = None
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(ITestToken)['resource']
 
         field_marshaler = queryMultiAdapter((context, fhir_field), IFieldMarshaler)
 

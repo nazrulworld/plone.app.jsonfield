@@ -1,11 +1,11 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import ITestToken
 from plone import api
 from plone.app.jsonfield.interfaces import IJSON
 from plone.app.jsonfield.interfaces import IJSONValue
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_FUNCTIONAL_TESTING
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_INTEGRATION_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.restapi.interfaces import IDeserializeFromJson
@@ -28,7 +28,7 @@ ___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 class DeserializerIntegrationTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_INTEGRATION_TESTING
+    layer = PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
@@ -64,12 +64,12 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
         context = api.content.create(
                 container=self.portal,
-                type='TestOrganization',
+                type='TestToken',
                 id=None,
                 title='Test Organization xxx',
             )
 
-        for name, field in getFields(ITestOrganization).items():
+        for name, field in getFields(ITestToken).items():
 
             if not IJSON.providedBy(field):
                 continue
@@ -78,7 +78,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
     def test_deserializer(self):
         """ """
         body = {
-            '@type': 'TestOrganization',
+            '@type': 'TestToken',
             'title': 'Test Organization xxx',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
@@ -110,7 +110,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
 class DeserializerFunctionalTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_FUNCTIONAL_TESTING
+    layer = PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
 
     def setUp(self):
         """ """
@@ -123,7 +123,7 @@ class DeserializerFunctionalTest(unittest.TestCase):
     def test_deserializer(self):
         """ """
         json_body = {
-            '@type': 'TestOrganization',
+            '@type': 'TestToken',
             'title': 'Test Organization xxx',
             'id': 'test-hospital'
         }

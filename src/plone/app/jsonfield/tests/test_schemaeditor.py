@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
-from .schema import ITestOrganization
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_FUNCTIONAL_TESTING
-from plone.app.jsonfield.testing import PLONE_APP_jsonfield_INTEGRATION_TESTING
+from .schema import ITestToken
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
+from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.schemaeditor.interfaces import IFieldFactory
@@ -19,7 +19,7 @@ ___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 class SchemaeditorIntegrationTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_INTEGRATION_TESTING
+    layer = PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
@@ -28,7 +28,7 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
 
     def test_editor(self):
         """ """
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(ITestToken)['resource']
         # Test: available as adapter
         field_factory = queryUtility(IFieldFactory, name='plone.app.jsonfield.field.JSON')
 
@@ -46,7 +46,7 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
 
 class SchemaeditorFunctionalTest(unittest.TestCase):
     """ """
-    layer = PLONE_APP_jsonfield_FUNCTIONAL_TESTING
+    layer = PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
 
     def setUp(self):
         """ """
@@ -86,14 +86,14 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         browser.open(self.portal_url + '/dexterity-types/@@add-type?ajax_load={0!s}'.format(time.time()))
 
         browser.getControl(name='form.widgets.title').value = 'test organization'
-        browser.getControl(name='form.widgets.id').value = 'testorganization'
+        browser.getControl(name='form.widgets.id').value = 'TestToken'
         browser.getControl(name='form.widgets.description').value = 'Test Organization Content Type'
         browser.getControl(name='form.buttons.add').click()
         # There must be form error! as required title is missing so url is unchanged
 
         # Let's fullfill required
         browser.open(
-            '{0}/dexterity-types/testorganization/@@add-field?ajax_load={1}'.format(
+            '{0}/dexterity-types/TestToken/@@add-field?ajax_load={1}'.format(
                 self.portal_url,
                 time.time()
                 )

@@ -8,14 +8,13 @@ from zope.interface import implementer
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 
-class ITestOrganization(model.Schema):
+class ITestToken(model.Schema):
     """ """
     resource = JSON(
-        title=u'Fhir Resource Field',
-        model='fhirclient.models.organization.Organization'
+        title=u'Token Meta'
     )
 
 
-@implementer(ITestOrganization)
-class TestOrganization(Container):
+@implementer(ITestToken)
+class TestToken(Container):
     """ """

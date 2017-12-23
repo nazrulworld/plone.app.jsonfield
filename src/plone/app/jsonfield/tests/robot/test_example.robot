@@ -10,7 +10,7 @@
 #
 # 1) Start robot server:
 #
-# $ bin/robot-server --reload-path src plone.app.jsonfield.testing.PLONE_APP_jsonfield_ACCEPTANCE_TESTING
+# $ bin/robot-server --reload-path src plone.app.jsonfield.testing.PLONE_APP_JSON_FIELD_ACCEPTANCE_TESTING
 #
 # 2) Run robot tests:
 #
