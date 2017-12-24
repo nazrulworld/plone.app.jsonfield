@@ -87,7 +87,7 @@ class SerializerIntegrationTest(unittest.TestCase):
         serializer = queryMultiAdapter((context, self.request), ISerializeToJson)
         result = serializer()
 
-        self.assertEqual(result['resource']['resourceType'], context.resource.resource_type)
+        self.assertEqual(result['resource']['resourceType'], context.resource['resourceType'])
 
 
 class SerializerFunctionalTest(unittest.TestCase):

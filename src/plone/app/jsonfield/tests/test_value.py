@@ -2,7 +2,6 @@
 from . import FHIR_FIXTURE_PATH
 from plone.app.jsonfield import value
 from plone.app.jsonfield.helpers import parse_json_str
-from zope.interface import implementer
 from zope.interface import Invalid
 from zope.schema import NO_VALUE
 from zope.schema.interfaces import WrongType
@@ -23,8 +22,15 @@ class ValueIntegrationTest(unittest.TestCase):
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             iter_value = json.load(f)
 
-        json_value = value.JSONValue(iter_value)
+        json_value = value.JSONObjectValue(iter_value)
+        self.assertIsInstance(json_value.stringify(), six.string_types)
 
+        json_arry_str = """
+        [
+            {"hello": "hp"}
+        ]
+        """
+        json_value = value.JSONObjectValue(iter_value)
         self.assertIsInstance(json_value.stringify(), six.string_types)
 
         # Test Patch
@@ -57,7 +63,7 @@ class ValueIntegrationTest(unittest.TestCase):
         json_str = json_value.stringify()
         json_dict = parse_json_str(json_str)
 
-        empty_resource = value.JSONValue(NO_VALUE)
+        empty_resource = value.JSONObjectValue(NO_VALUE)
         # __bool__ should be False
         self.assertFalse(empty_resource)
 
@@ -69,11 +75,11 @@ class ValueIntegrationTest(unittest.TestCase):
             pass
 
         self.assertIn('{}', repr(empty_resource))
-        self.assertEqual('', str(empty_resource))
+        self.assertEqual('{}', str(empty_resource))
 
         # Validation Test:: more explict with schema???
         try:
-            value.JSONValue('Ketty')
+            value.JSONObjectValue('Ketty')
             raise AssertionError('Code should not come here, because should raise validation error!')
         except WrongType:
             pass

@@ -26,7 +26,7 @@ class JSONFieldMarshaler(BaseFieldMarshaler):
             unicode_value = value  # was already unicode
 
         if unicode_value in ('', None):
-            decoded_value = IJSON(self.field).from_none()
+            decoded_value = None
         else:
             decoded_value = IJSON(self.field).fromUnicode(unicode_value)
         return decoded_value

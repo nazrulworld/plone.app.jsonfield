@@ -5,10 +5,11 @@ from plone.app.jsonfield.compat import json
 from plone.app.jsonfield.helpers import parse_json_str
 from plone.app.jsonfield.interfaces import IJSON
 from plone.app.jsonfield.interfaces import IJSONValue
+from plone.app.jsonfield.value import JSONArrayValue
+from plone.app.jsonfield.value import JSONObjectValue
 from plone.app.jsonfield.value import JSONValue
 from zope.interface import implementer
 from zope.interface import Invalid
-from zope.schema import NO_VALUE
 from zope.schema import Object
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongType
@@ -25,11 +26,11 @@ class JSON(Object):
     """JSON field"""
     _type = JSONValue
 
-    def __init__(self, schema=None, **kw):
+    def __init__(self, json_schema=None, **kw):
         """
-        :param: schema: JSON Schema http://json-schema.org/
+        :param: json_schema: JSON Schema http://json-schema.org/
         """
-        self.schema = schema
+        self.json_schema = json_schema
         self.init_validate()
 
         if 'default' in kw:
@@ -51,27 +52,27 @@ class JSON(Object):
 
     def from_iterable(self, iter_value):
         """ """
-        value = JSONValue(iter_value, schema=self.schema, encoding='utf-8')
+        factory = JSONObjectValue
+        if isinstance(iter_value, (list, tuple, set)):
+            factory = JSONArrayValue
+
+        value = factory(iter_value, schema=self.json_schema, encoding='utf-8')
 
         self.validate(value)
 
         return value
 
-    def from_none(self):
-        """" """
-        return JSONValue(NO_VALUE)
-
     def init_validate(self):
         """ """
-        if self.schema is None:
+        if self.json_schema is None:
             # No validation is required.
             return
 
         try:
-            json.dumps(self.schema)
-            if not isinstance(self.schema, dict):
+            json.dumps(self.json_schema)
+            if not isinstance(self.json_schema, dict):
                 raise WrongType(
-                    'Schema value must be dict type! but got `{0!s}` type'.format(type(self.schema)))
+                    'Schema value must be dict type! but got `{0!s}` type'.format(type(self.json_schema)))
 
         except ValueError as exc:
             msg = _('Invalid schema data type! dict data type is expected.')

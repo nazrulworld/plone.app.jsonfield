@@ -1,6 +1,5 @@
 # _*_ coding: utf-8 _*_
 from .interfaces import IJSONValue
-from collections import defaultdict
 from plone import api
 from plone.app.jsonfield.compat import _
 from plone.app.jsonfield.compat import json
@@ -19,7 +18,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 
 @implementer(IJSONValue)
-class JSONValue(dict):
+class JSONValue(object):
     """"""
     def patch(self, patch_data):
         """:@links: https://python-json-patch.readthedocs.io/en/latest/tutorial.html#creating-a-patch"""
@@ -44,9 +43,7 @@ class JSONValue(dict):
             # will make little bit slow, so apply only if needed
             params['indent'] = 4
 
-        return 0 < len(self) and \
-            json.dumps(self, **params) or \
-            ''
+        return json.dumps(self, **params)
 
     def _validate_object(self, obj, schema=None):
         """ """
@@ -94,3 +91,29 @@ class JSONValue(dict):
     def __str__(self):
         """ """
         return self.stringify()
+
+
+class JSONObjectValue(JSONValue, dict):
+    """ """
+    def _validate_object(self, obj, schema=None):
+        """" """
+        super(JSONObjectValue, self)._validate_object(obj, schema)
+
+        if isinstance(obj, (list, tuple, set)):
+            raise WrongType('given value must be dict type data but got `{0}` type data!'.format(type(obj)))
+
+
+class JSONArrayValue(JSONValue, list):
+    """" """
+    def patch(self, patch_data):
+        raise Invalid('json patch is not applicable on array type value!')
+
+    def _validate_object(self, obj, schema=None):
+        """ """
+        super(JSONObjectValue, self)._validate_object(obj, schema)
+
+        if not isinstance(obj, (list, tuple, set)):
+            raise WrongType('given value must be array type data but got `{0}` type data!'.format(type(obj)))
+
+
+__all__ = [str(x) for x in ('JSONObjectValue', 'JSONArrayValue', )]

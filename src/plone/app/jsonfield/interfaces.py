@@ -8,15 +8,13 @@ from zope.schema.interfaces import IObject
 
 class IJSON(IObject):
     """ """
-    schema = zs.Iterable(
+    json_schema = zs.Iterable(
         title=_('JSON schema'),
         required=False
     )
 
     def from_iterable(iter_value):
         """ """
-    def from_none():
-        """Make JSONValue instance without JSON data """
 
 
 class IJSONValue(Interface):

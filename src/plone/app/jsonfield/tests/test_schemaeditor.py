@@ -34,11 +34,9 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
 
         self.assertIsNotNone(field_factory)
         fhir_field2 = field_factory(
-            title=u'Fhir Resource Field',
-            model='fhirclient.models.organization.Organization')
+            title=u'Fhir Resource Field')
 
-        self.assertEqual(fhir_field.model, fhir_field2.model)
-        self.assertEqual(fhir_field, fhir_field2)
+        self.assertEqual(fhir_field.__class__, fhir_field2.__class__)
 
         field_list = [x for x in getUtilitiesFor(IFieldFactory) if x[0] == 'plone.app.jsonfield.field.JSON']
         self.assertEqual(1, len(field_list))

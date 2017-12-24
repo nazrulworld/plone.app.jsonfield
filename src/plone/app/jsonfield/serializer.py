@@ -24,7 +24,7 @@ class JSONSerializer(DefaultFieldSerializer):
         """value type: JSONValue"""
         fhir_value = self.get_value()
         if fhir_value:
-            value = fhir_value.as_json()
+            value = fhir_value
         else:
             value = None
         return value
