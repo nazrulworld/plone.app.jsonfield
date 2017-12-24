@@ -28,7 +28,7 @@
 Introduction (plone.app.jsonfield)
 ==================================
 
-`FHIR`_ (Fast Healthcare Interoperability Resources) is the standard for Healthcare system. Our intend to implemnt `FHIR`_ based system using `Plone`_! `plone.app.jsonfield`_ will make life easier to create, manage content for `FHIR resources`_.
+JSON field for Plone.
 
 Features
 --------
@@ -37,15 +37,7 @@ Features
 - Widget: z3cform support
 - plone.supermodel support
 - plone.rfc822 marshaler field support
-
-
-Roadmaps
---------
-- indexing: we have plan to support json index like elastic search model. Ofcourse performance will be main issue. bellows are some libraries, I found. You are welcome to suggest me any better library for json search.
-    - `jmespath`_
-    - `jsonpath-ng`_
-    - `jsonpath-rw`_
-- elastic search support
+- json schema support (draft3 and draft4)
 
 
 Installation
