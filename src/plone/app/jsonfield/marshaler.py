@@ -15,8 +15,6 @@ class JSONFieldMarshaler(BaseFieldMarshaler):
         if value is None:
             return
         actual_value = value.stringify(prettify=True)
-        if not actual_value:
-            return
         return actual_value.encode(charset)
 
     def decode(self, value, message=None, charset='utf-8', contentType=None, primary=False):

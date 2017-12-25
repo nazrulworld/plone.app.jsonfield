@@ -25,6 +25,7 @@ __author__ = 'Md Nazrul Islam<nazrul@zitelab.dk>'
 class JSON(Object):
     """JSON field"""
     _type = JSONValue
+    schema = IJSONValue
 
     def __init__(self, json_schema=None, **kw):
         """
@@ -39,10 +40,8 @@ class JSON(Object):
                 kw['default'] = self.fromUnicode(default)
             elif isinstance(default, dict):
                 kw['default'] = self.from_iterable(default)
-            elif default is None:
-                kw['default'] = self.from_none()
 
-        super(JSON, self).__init__(schema=IJSONValue, **kw)
+        super(JSON, self).__init__(schema=self.schema, **kw)
 
     def fromUnicode(self, str_val):
         """ """
@@ -74,7 +73,7 @@ class JSON(Object):
                 raise WrongType(
                     'Schema value must be dict type! but got `{0!s}` type'.format(type(self.json_schema)))
 
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             msg = _('Invalid schema data type! dict data type is expected.')
             if api.env.debug_mode():
                 msg += _('Original Exception: {0!s}').format(exc)

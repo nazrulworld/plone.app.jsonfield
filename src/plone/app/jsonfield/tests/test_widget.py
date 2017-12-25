@@ -5,7 +5,6 @@ from .schema import ITestToken
 from plone.app.jsonfield import widget
 from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_FUNCTIONAL_TESTING
 from plone.app.jsonfield.testing import PLONE_APP_JSON_FIELD_INTEGRATION_TESTING
-from plone.app.jsonfield.value import JSONValue
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
@@ -36,115 +35,122 @@ class WidgetIntegrationTest(unittest.TestCase):
     def test_widget(self):
         """ """
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            fhir_str = f.read()
+            json_object_str = f.read()
 
-        request = TestRequest(form={'resource': fhir_str})
-        fhir_widget = widget.JSONWidget(request)
-        fhir_widget.name = 'resource'
-        self.assertTrue(widget.IJSONWidget.providedBy(fhir_widget))
-        self.assertIsNone(fhir_widget.value)
-        fhir_widget.update()
-        # self.assertEqual(fhir_widget.value, fhir_str)
-        # fhir_field = getFields(ITestToken)['resource']
+        request = TestRequest(form={'resource': json_object_str})
+        json_widget = widget.JSONWidget(request)
+        json_widget.name = 'resource'
 
-        # field_widget = widget.JSONFieldWidget(fhir_field, request)
-        # self.assertTrue(IFieldWidget.providedBy(field_widget))
+        self.assertTrue(widget.IJSONWidget.providedBy(json_widget))
+        self.assertIsNone(json_widget.value)
+        json_widget.update()
+
+        self.assertEqual(json_widget.value, json_object_str)
+        json_field = getFields(ITestToken)['resource']
+
+        field_widget = widget.JSONFieldWidget(json_field, request)
+        self.assertTrue(IFieldWidget.providedBy(field_widget))
         # @TODO: Make sure widget.render() works!
 
     def test_data_converter(self):
         """ """
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            fhir_str = f.read()
-        request = TestRequest(form={'resource': fhir_str})
-        fhir_field = getFields(ITestToken)['resource']
-        field_widget = widget.JSONFieldWidget(fhir_field, request)
+            json_object_str = f.read()
+        request = TestRequest(form={'resource': json_object_str})
+        json_field = getFields(ITestToken)['resource']
+        field_widget = widget.JSONFieldWidget(json_field, request)
 
-        converter = queryMultiAdapter((fhir_field, field_widget), IDataConverter)
+        converter = queryMultiAdapter((json_field, field_widget), IDataConverter)
         self.assertIsNotNone(converter)
 
         # All Test: toWidgetValue
-        # fhir_value = converter.toWidgetValue('')
-        # self.assertFalse(fhir_value)
-        # self.assertIsInstance(fhir_value, JSONValue)
+        json_value = converter.toWidgetValue('')
+        self.assertFalse(json_value)
+        self.assertEqual(json_value, '')
 
-        # fhir_value = converter.toWidgetValue(fhir_str)
-        # self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
+        json_value = converter.toWidgetValue(json_object_str)
 
-        # try:
-        #     converter.toWidgetValue(('hello', 'wrong type', ))
-        #     raise AssertionError('Code should not come here! As wrong types data is provided')
-        # except ValueError as exc:
-        #     self.assertIn('IJSONValue', str(exc))
+        self.assertIn(json_value['resourceType'], json_object_str.decode('utf-8'))
 
-        # # All Test: toFieldValue
-        # fhir_value = converter.toFieldValue(NOVALUE)
-        # self.assertFalse(fhir_value)
-        # self.assertIsInstance(fhir_value, JSONValue)
+        try:
+            converter.toWidgetValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('IJSONValue', str(exc))
 
-        # fhir_value = converter.toFieldValue(fhir_str)
-        # self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
+        # All Test: toFieldValue
+        json_value = converter.toFieldValue(NOVALUE)
+        self.assertFalse(json_value)
+        self.assertIsNone(json_value)
 
-        # fhir_value2 = converter.toFieldValue(fhir_value)
-        # self.assertEqual(fhir_value, fhir_value2)
+        json_value = converter.toFieldValue(json_object_str)
+        self.assertIn(json_value['resourceType'], json_object_str.decode('utf-8'))
 
-        # try:
-        #     converter.toFieldValue(('hello', 'wrong type', ))
-        #     raise AssertionError('Code should not come here! As wrong types data is provided')
-        # except ValueError as exc:
-        #     self.assertIn('IJSONValue', str(exc))
+        json_value2 = converter.toFieldValue(json_value)
+        self.assertEqual(json_value, json_value2)
+
+        try:
+            converter.toFieldValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('IJSONValue', str(exc))
 
     def test_textarea_data_converter(self):
         """ """
         from z3c.form.browser.textarea import TextAreaWidget
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            fhir_str = f.read()
-        request = TestRequest(form={'resource': fhir_str})
-        fhir_field = getFields(ITestToken)['resource']
+            json_object_str = f.read()
+        request = TestRequest(form={'resource': json_object_str})
+        json_field = getFields(ITestToken)['resource']
         field_widget = TextAreaWidget(request)
 
-        converter = queryMultiAdapter((fhir_field, field_widget), IDataConverter)
+        converter = queryMultiAdapter((json_field, field_widget), IDataConverter)
         self.assertIsNotNone(converter)
 
         # All Test: toFieldValue
-        # fhir_value_empty = converter.toFieldValue(NOVALUE)
-        # self.assertFalse(fhir_value_empty)
-        # self.assertIsInstance(fhir_value_empty, JSONValue)
+        json_value_empty = converter.toFieldValue(NOVALUE)
+        self.assertFalse(json_value_empty)
 
-        # fhir_value = converter.toFieldValue(fhir_str)
-        # self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
+        json_value = converter.toFieldValue(json_object_str)
+        self.assertIn(json_value['resourceType'], json_object_str.decode('utf-8'))
 
-        # fhir_value2 = converter.toFieldValue(fhir_value)
-        # self.assertEqual(fhir_value, fhir_value2)
+        json_value2 = converter.toFieldValue(json_value)
+        self.assertEqual(json_value, json_value2)
 
-        # try:
-        #     converter.toFieldValue(('hello', 'wrong type', ))
-        #     raise AssertionError('Code should not come here! As wrong types data is provided')
-        # except ValueError as exc:
-        #     self.assertIn('IJSONValue', str(exc))
+        try:
+            converter.toFieldValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('IJSONValue', str(exc))
 
-        # # All Test: toWidgetValue
-        # fhir_value = converter.toWidgetValue('')
-        # self.assertFalse(fhir_value)
-        # self.assertEqual('', '')
+        # All Test: toWidgetValue
+        original_mode = converter.widget.mode
+        converter.widget.mode = 'display'
+        json_object_str = converter.toWidgetValue(json_value)
+        self.assertEqual(len(json_object_str), len(json_value.stringify()))
 
-        # fhir_value_1 = converter.toWidgetValue(fhir_str)
-        # self.assertIn('Organization', fhir_value_1)
-        # self.assertIn('resourceType', fhir_value_1)
+        converter.widget.mode = original_mode
 
-        # fhir_value_2 = converter.toWidgetValue(fhir_value2)
-        # self.assertEqual(json.loads(fhir_value_1), json.loads(fhir_value_2))
+        json_value = converter.toWidgetValue('')
+        self.assertFalse(json_value)
+        self.assertEqual(json_value, '')
 
-        # converter.widget.mode = 'display'
+        json_value_1 = converter.toWidgetValue(json_object_str)
+        self.assertIn('Organization', json_value_1)
+        self.assertIn('resourceType', json_value_1)
 
-        # fhir_value_3 = converter.toWidgetValue(fhir_value_empty)
-        # self.assertEqual(fhir_value_3, '')
+        json_value_2 = converter.toWidgetValue(json_value2)
+        self.assertEqual(json.loads(json_value_1), json.loads(json_value_2))
 
-        # try:
-        #     converter.toWidgetValue(('hello', 'wrong type', ))
-        #     raise AssertionError('Code should not come here! As wrong types data is provided')
-        # except ValueError as exc:
-        #     self.assertIn('Can not convert', str(exc))
+        json_value_3 = converter.toWidgetValue(json_value_empty)
+        self.assertEqual(json_value_3, '')
+
+        try:
+            converter.toWidgetValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('Can not convert', str(exc))
 
 
 class WidgetFunctionalTest(unittest.TestCase):
@@ -186,7 +192,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         self.login_as_admin()
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            fhir_str = f.read()
+            json_object_str = f.read()
 
         browser = self.browser
         browser.open(self.portal_url + '/++add++TestToken')
@@ -222,30 +228,32 @@ class WidgetFunctionalTest(unittest.TestCase):
         # form.buttons.save
         # form.buttons.cancel
         browser.getControl(name='form.widgets.IBasic.title').value = 'hello organization'
-        browser.getControl(name='form.widgets.resource').value = fhir_str
+        browser.getControl(name='form.widgets.resource').value = json_object_str
         browser.getControl(name='form.buttons.save').click()
         # There must be form error! as required title is missing so url is unchanged
         self.assertEqual(browser.mech_browser.geturl(), self.portal_url + '/++add++TestToken')
         # Test Value exist, even form resubmit
-        self.assertEqual(json.loads(browser.getControl(name='form.widgets.resource').value), json.loads(fhir_str))
+        self.assertEqual(
+            json.loads(browser.getControl(name='form.widgets.resource').value),
+            json.loads(json_object_str))
 
         # Let's fullfill required
         browser.getControl(name='form.widgets.IDublinCore.title').value = 'hello organization'
         # After solving that problem, this again value assign not need
-        browser.getControl(name='form.widgets.resource').value = fhir_str
+        browser.getControl(name='form.widgets.resource').value = json_object_str
         browser.getControl(name='form.buttons.save').click()
         # should suceess now and redirect to view page
-        # self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/TestToken/view')
+        self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/testtoken/view')
 
         # let's try edit
-        # browser.open('http://localhost:55001/plone/TestToken/edit')
-        # fhir_str = browser.getControl(name='form.widgets.resource').value
+        browser.open('http://localhost:55001/plone/testtoken/edit')
+        json_object_str = browser.getControl(name='form.widgets.resource').value
 
-        # fhir_json = json.loads(fhir_str)
-        # fhir_json['text']['div'] = '<div>modified</div>'
-        # browser.getControl(name='form.widgets.resource').value = json.dumps(fhir_json)
-        # browser.getControl(name='form.buttons.save').click()
-        # # should sucess
-        # self.assertIn('class="portalMessage info"', browser.contents)
-        # self.assertIn('Changes saved', browser.contents)
-        # self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/TestToken')
+        json_object = json.loads(json_object_str)
+        json_object['text']['div'] = '<div>modified</div>'
+        browser.getControl(name='form.widgets.resource').value = json.dumps(json_object)
+        browser.getControl(name='form.buttons.save').click()
+        # should sucess
+        self.assertIn('class="portalMessage info"', browser.contents)
+        self.assertIn('Changes saved', browser.contents)
+        self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/testtoken')

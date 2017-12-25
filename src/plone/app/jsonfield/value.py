@@ -1,11 +1,12 @@
 # _*_ coding: utf-8 _*_
+from .compat import EMPTY_STRING
+from .compat import NO_VALUE
 from .interfaces import IJSONValue
 from plone import api
 from plone.app.jsonfield.compat import _
 from plone.app.jsonfield.compat import json
 from zope.interface import implementer
 from zope.interface import Invalid
-from zope.schema import NO_VALUE
 from zope.schema.interfaces import WrongType
 
 import jsonpatch
@@ -47,8 +48,22 @@ class JSONValue(object):
 
     def _validate_object(self, obj, schema=None):
         """ """
-        if obj in (None, NO_VALUE):
-            return
+        if obj in (None, NO_VALUE, EMPTY_STRING):
+            return True
+
+        if isinstance(obj, six.string_types):
+            raise WrongType('value must be json serialable!')
+
+        try:
+            # Test if value is iterable
+            iter(obj)
+            json.dumps(obj)
+        except (TypeError, ValueError) as exc:
+            msg = _('Only dict or list type value is allowed, value must be json serialable!')
+            if api.env.debug_mode():
+                msg += _('Original exception: {0!s}').format(exc)
+
+            six.reraise(WrongType, WrongType(msg), sys.exc_info()[2])
 
         if schema:
             try:
@@ -62,28 +77,13 @@ class JSONValue(object):
                     ) as exc:
                 six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
 
-        elif isinstance(obj, six.string_types):
-            raise WrongType('value must be json serialable!')
-
-        else:
-            try:
-                # First Test if value is iterable
-                iter(obj)
-                json.dumps(obj)
-            except (TypeError, ValueError) as exc:
-                msg = _('Only dict or list type value is allowed, value must be json serialable!')
-                if api.debug_mode():
-                    msg += _('Original exception: {0!s}').format(exc)
-
-                six.reraise(WrongType, WrongType(msg), sys.exc_info()[2])
-
     def __init__(self, obj, schema=None, encoding='utf-8'):
         """ """
         # Let's validate before value assignment!
         self._validate_object(obj, schema=schema)
         self.encoding = encoding
         args = []
-        if obj not in (None, NO_VALUE):
+        if obj not in (None, NO_VALUE, EMPTY_STRING):
             args.append(obj)
 
         super(JSONValue, self).__init__(*args)
@@ -97,10 +97,11 @@ class JSONObjectValue(JSONValue, dict):
     """ """
     def _validate_object(self, obj, schema=None):
         """" """
-        super(JSONObjectValue, self)._validate_object(obj, schema)
-
-        if isinstance(obj, (list, tuple, set)):
-            raise WrongType('given value must be dict type data but got `{0}` type data!'.format(type(obj)))
+        res = super(JSONObjectValue, self)._validate_object(obj, schema)
+        if not res:
+            if isinstance(obj, (list, tuple, set)):
+                raise WrongType('given value must be dict type data but got `{0}` type data!'.format(type(obj)))
+        return res
 
 
 class JSONArrayValue(JSONValue, list):
@@ -110,10 +111,11 @@ class JSONArrayValue(JSONValue, list):
 
     def _validate_object(self, obj, schema=None):
         """ """
-        super(JSONObjectValue, self)._validate_object(obj, schema)
-
-        if not isinstance(obj, (list, tuple, set)):
-            raise WrongType('given value must be array type data but got `{0}` type data!'.format(type(obj)))
+        res = super(JSONArrayValue, self)._validate_object(obj, schema)
+        if not res:
+            if not isinstance(obj, (list, tuple, set)):
+                raise WrongType('given value must be array type data but got `{0}` type data!'.format(type(obj)))
+        return res
 
 
 __all__ = [str(x) for x in ('JSONObjectValue', 'JSONArrayValue', )]

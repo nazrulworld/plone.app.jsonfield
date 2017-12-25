@@ -29,14 +29,14 @@
         file="schemaeditor.zcml"
     />
 
-    <!-- Configure plone.restapi serializer  if installed -->
-    <include zcml:condition="installed plone.restapi"
-        file="serializer.zcml"
-    />
-
     <!-- Configure plone.restapi deserializer if installed -->
     <include zcml:condition="installed plone.restapi"
         file="deserializer.zcml"
+    />
+
+    <!-- Configure plone.restapi serializer if installed -->
+    <include zcml:condition="installed plone.restapi"
+        file="serializer.zcml"
     />
 
     <!-- Configure plone.rfc822 field encode/decode if installed -->

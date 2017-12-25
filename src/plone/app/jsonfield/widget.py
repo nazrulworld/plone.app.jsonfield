@@ -54,7 +54,7 @@ class JSONConverter(BaseDataConverter):
             return value
 
         elif value in (NOVALUE, None, ''):
-            return IJSON(self.field).from_none()
+            return ''
 
         elif isinstance(value, six.string_types):
             return IJSON(self.field).fromUnicode(value)
@@ -72,7 +72,7 @@ class JSONConverter(BaseDataConverter):
             return IJSON(self.field).fromUnicode(value)
 
         elif value in (NOVALUE, None, ''):
-            return IJSON(self.field).from_none()
+            return None
 
         raise ValueError(
             'Can not convert {0!s} to an IJSONValue'.format(value)
@@ -109,7 +109,7 @@ class JSONAreaConverter(BaseDataConverter):
             return IJSON(self.field).fromUnicode(value)
 
         elif value in (NOVALUE, None, ''):
-            return IJSON(self.field).from_none()
+            return None
 
         raise ValueError(
             'Can not convert {0!r} to an IJSONValue'.format(value)
