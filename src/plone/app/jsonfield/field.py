@@ -63,13 +63,18 @@ class JSON(Object):
 
     def init_validate(self):
         """ """
-        if self.json_schema is None:
+        schema = self.json_schema
+        if schema is None:
             # No validation is required.
             return
 
         try:
-            json.dumps(self.json_schema)
-            if not isinstance(self.json_schema, dict):
+            if isinstance(schema, six.string_types):
+                schema = json.loads(schema)
+                self.json_schema = schema
+
+            json.dumps(schema)
+            if not isinstance(schema, dict):
                 raise WrongType(
                     'Schema value must be dict type! but got `{0!s}` type'.format(type(self.json_schema)))
 
