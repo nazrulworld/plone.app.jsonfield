@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0a2 (unreleased)
+1.0.0a2 (2017-12-27)
 --------------------
 
 - `plone restapi`_, `z3c widget`_, `plone.supermodel`_, `plone.rfc822`_ marshaler field and plone schema editor are activated.[nazrulworld]
