@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0a3 (unreleased)
+1.0.0a3 (2018-01-22)
 --------------------
 
 - fix(bug): Empty string value raise json validation error
