@@ -51,14 +51,12 @@ class JSON(Object):
 
     def from_iterable(self, iter_value):
         """ """
-        factory = JSONObjectValue
-        if isinstance(iter_value, (list, tuple, set)):
-            factory = JSONArrayValue
-
-        value = factory(iter_value, schema=self.json_schema, encoding='utf-8')
-
+        if iter_value is None:
+            value = None
+        else:
+            value = self._from_iterable(iter_value)
+        # do validation now
         self.validate(value)
-
         return value
 
     def init_validate(self):
@@ -83,3 +81,13 @@ class JSON(Object):
             if api.env.debug_mode():
                 msg += _('Original Exception: {0!s}').format(exc)
             six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+
+    def _from_iterable(self, iter_value):
+        """ """
+        factory = JSONObjectValue
+        if isinstance(iter_value, (list, tuple, set)):
+            factory = JSONArrayValue
+
+        value = factory(iter_value, schema=self.json_schema, encoding='utf-8')
+
+        return value

@@ -119,6 +119,15 @@ class FieldIntegrationTest(unittest.TestCase):
         except Invalid as exc:
             self.assertIn('Invalid JSON String', str(exc))
 
+    def test_fromUnicodewith_empty_string(self):
+        """ """
+        fhir_field = field.JSON(
+            title=six.text_type('Organization resource'),
+            required=False
+        )
+        value = fhir_field.fromUnicode('')
+        self.assertIsNone(value)
+
     def test_field(self):
         """ """
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.schema.json'), 'r') as f:
